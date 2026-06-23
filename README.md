@@ -61,6 +61,10 @@ files or shell out to `gh` against your local checkouts.
 Cadences are suggestions — adjust to taste. "Thin-trigger prompt" is the entire contents of the
 scheduled task: it just invokes the skill, which holds the logic.
 
+> 📋 For **copy-paste-ready task blocks** (one per skill, with cadence, surface, the exact prompt,
+> and what each needs in `CONFIG.md`), see **[`SCHEDULES.md`](./SCHEDULES.md)** — that's the
+> 30-second setup scaffolding for creating or rebuilding your schedules.
+
 | Skill | Default on? | Recommended cadence | Run surface | Connectors | Thin-trigger prompt to paste |
 |---|---|---|---|---|---|
 | `meeting-prep` | ✅ on | Daily, ~7:00 | Cloud | Calendar, Drive, Gmail | Run the meeting-prep skill and post the digest. |
