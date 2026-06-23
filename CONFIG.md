@@ -38,7 +38,7 @@ drafts read like you — the words stay yours, the kit just gets the first draft
 
 ## GitHub
 
-- **GitHub username:** << your-github-username >>
+- **GitHub username:** at3gk  <!-- prefilled (non-sensitive); change on a new account -->
 - **Primary org:** << your-org >>
 - **Repos to watch (ship-decoder / stale-work / CI):** << owner/repo, owner/repo2 >>
 - **Ship-decoder sources:** << repos AND/OR changelog URL AND/OR Slack channels >>

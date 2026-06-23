@@ -24,7 +24,8 @@ Fill in `CONFIG.md`, reconnect your connectors, recreate the thin-trigger schedu
 ## Transfer checklist (personal → work account)
 
 1. **Push this repo** to your own GitHub (or keep using the existing one).
-2. **Add the marketplace:** `/plugin marketplace add << github-user >>/Automations-`
+2. **Add the marketplace:** `/plugin marketplace add at3gk/Automations-`
+   _(On a different account, swap `at3gk` for that account's GitHub user once you've pushed your own copy.)_
 3. **Install the plugin:** `/plugin install personal-automations@claude-automations`
 4. **Reconnect connectors** on the new account: Gmail, Google Calendar, Google Drive, GitHub —
    plus any swapped ones (Slack/Linear/Firecrawl) you noted in `CONFIG.md`.
@@ -125,5 +126,5 @@ competitor URLs, launch sources, your running "wins" doc name, brag-doc name, re
 follow-up threshold `N`, and your connector choices. **No secrets** — credentials stay in the
 connectors you reconnect per account.
 
-> Replace `<< github-user >>` in the install command above and in
-> `.claude-plugin/plugin.json` with your GitHub username.
+> The install commands and `.claude-plugin/plugin.json` are wired to `at3gk/Automations-`. On a
+> new account, push your own copy and swap `at3gk` for that account's GitHub username.
