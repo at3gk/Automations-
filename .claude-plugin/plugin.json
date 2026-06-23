@@ -1,0 +1,17 @@
+{
+  "name": "personal-automations",
+  "version": "0.1.0",
+  "description": "A portable, version-controlled kit of scheduled agentic automations. All logic lives in Skills; schedules are thin triggers; connectors are per-account wiring. Personalize via CONFIG.md and reconnect connectors to install on any Claude account.",
+  "author": {
+    "name": "<< your name >>"
+  },
+  "homepage": "https://github.com/<< github-user >>/Automations-",
+  "license": "MIT",
+  "keywords": [
+    "automations",
+    "productivity",
+    "skills",
+    "scheduled-tasks"
+  ],
+  "skills": "./skills"
+}
