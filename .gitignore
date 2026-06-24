@@ -12,6 +12,20 @@ token.json
 *.pem
 *.key
 
+# inbox-pipeline — data/state lives in Drive, never in git (see inbox-pipeline/docs/DRIVE_LAYOUT.md)
+inbox-pipeline/dist/*
+!inbox-pipeline/dist/.gitkeep
+inbox-pipeline/state/*
+!inbox-pipeline/state/.gitkeep
+ledger-*.json
+inbox-state.json
+*.financial.json
+extracted/
+
+# Python bytecode (generators / capweb)
+__pycache__/
+*.pyc
+
 # OS / editor cruft
 .DS_Store
 .DS_Store?

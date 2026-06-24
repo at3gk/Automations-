@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "reconciliation_report",
+  "description": "Deterministic output of reconcile.py. Every input record lands in exactly one bucket. Any non-matched bucket is a halt-and-flag item for a human; nothing is auto-resolved.",
+  "type": "object",
+  "required": ["matched", "amount_mismatch", "hours_mismatch", "missing_invoice", "orphan_invoice", "duplicate"],
+  "additionalProperties": false,
+  "properties": {
+    "matched": {
+      "type": "array",
+      "description": "timesheet+invoice agree on {client, period}, hours, and amount",
+      "items": {
+        "type": "object",
+        "required": ["client", "period", "hours", "amount", "timesheet_id", "invoice_id"],
+        "properties": {
+          "client": { "type": "string" },
+          "period": { "type": "string" },
+          "hours": { "type": "string" },
+          "amount": { "type": "string" },
+          "timesheet_id": { "type": "string" },
+          "invoice_id": { "type": "string" },
+          "payee": { "type": ["string", "null"] },
+          "due_date": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "amount_mismatch": {
+      "type": "array",
+      "description": "hours agree but billed amount != expected amount (exact compare)",
+      "items": { "type": "object" }
+    },
+    "hours_mismatch": {
+      "type": "array",
+      "description": "hours disagree between timesheet and invoice",
+      "items": { "type": "object" }
+    },
+    "missing_invoice": {
+      "type": "array",
+      "description": "timesheet with no invoice for its {client, period}",
+      "items": { "type": "object" }
+    },
+    "orphan_invoice": {
+      "type": "array",
+      "description": "invoice with no timesheet for its {client, period}",
+      "items": { "type": "object" }
+    },
+    "duplicate": {
+      "type": "array",
+      "description": "more than one timesheet or invoice for the same {client, period}; not matched, flagged for a human",
+      "items": { "type": "object" }
+    }
+  }
+}

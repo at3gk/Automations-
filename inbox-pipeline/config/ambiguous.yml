@@ -1,0 +1,16 @@
+# ambiguous.yml — senders we DELIBERATELY never auto-file.
+# These are shared-platform or overloaded addresses where the category depends on the message body.
+# `inbox-triage` routes any hit here to the review_label (Review/Unsorted) and leaves it in the
+# inbox for a human read — it NEVER guesses a category for these.
+#
+# Schema:
+#   never_autofile:
+#     - { match: "<domain or full address>", reason: "<why it's ambiguous>" }
+never_autofile:
+  - { match: "store-news@google.com",       reason: "Google Store deals — collides with Google security mail" }
+  - { match: "no-reply@google.com",         reason: "overloaded Google sender; could be security or product" }
+  - { match: "photos@onedrive.com",         reason: "photo-memory notifications, not security" }
+  - { match: "myshieldsystem.com",          reason: "unclear product (identity protection? supplement?)" }
+  - { match: "ghost.io",                    reason: "shared newsletter platform; topic varies by sender" }
+  - { match: "thestretch@mail.beehiiv.com", reason: "beehiiv platform; topic unconfirmed" }
+  - { match: "tmindset@substack.com",       reason: "productivity newsletter; not clearly AI or Reading" }

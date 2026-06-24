@@ -1,0 +1,60 @@
+# sender-map.yml — SINGLE SOURCE OF TRUTH for sender -> category mapping.
+# Drives both the `inbox-triage` skill's classification AND generate/build_filters.py.
+#
+# Schema:
+#   categories:
+#     "<label from taxonomy.yml>":
+#       from:    [ matchers ]   # bare domain (chewy.com) matches any address/subdomain at that
+#                               # domain; a full address (a@b.com) matches exactly.
+#       subject: [ strings ]    # optional subject substring matchers (lower precedence than from)
+#
+# Every label used here MUST exist in taxonomy.yml (validate_config.py enforces this).
+version: 1
+categories:
+  "AI & Dev/Newsletters":
+    from: [tldrnewsletter.com, aiagentssimplified@substack.com, aitechin@substack.com,
+           kenhuangus@substack.com, systemdesignone@substack.com, hexgarcia.com, scaleupmedia.com]
+  "AI & Dev/Learning":
+    from: [datacamp.com, maven.com, parlance-labs.com, ideabrowser.com, scribehow.com]
+  "AI & Dev/Dev Tools":
+    from: [github.com, jules-noreply@google.com, supabase.com, firebase-noreply@google.com]
+  "Finance/Banking & Cards":
+    from: [americanexpress.com, capitalone.com, paypal.com, venmo.com, members.bilt.com]
+  "Finance/Investing":
+    from: [fidelity.com, coinbase.com, startengine.com]
+    subject: ["Mariner Market Commentary"]
+  "Home & Living/Apartment":
+    from: [realpage.com, luxerone.com, getflex.com, jagmgt.com, modernmsg.com]
+  "Home & Living/Real Estate":
+    from: [zillow.com]
+  "Home & Living/Relocation":
+    from: [aswemove.com]
+  "Pets":
+    from: [chewy.com, petsmart.com, litter-robot.com, petlibro.com, covetruspharmacy.com,
+           kytin.com, primalinstinct.net]
+  "Health":
+    from: [anthem.com, webpt.com, google-health-noreply@google.com]
+  "Auto":
+    from: [reyrey.net, carlabs-x.com]
+  "Travel":
+    from: [united.com, avantstay.com, adventuresunbound.com]
+  "Career":
+    from: [linkedin.com, climatebase.org]
+  "Accounts & Security":
+    from: [accounts.google.com, okta.com]
+    subject: ["verification code", "one-time", "security alert"]
+  "Civic & Charity":
+    from: [govdelivery.com, rectrac.com, usaforunhcr.org]
+  "Reading":
+    from: [nytimes.com, cnn.com, veganscratchkitchen@substack.com]
+  "Shopping & Deals":
+    from: [beyondyoga.com, underarmour.com, fahertybrand.com, lululemon.com, wolfandshepherd.com,
+           cotopaxi.com, rei.com, bellsofsteel.us, thenormalbrand.com, target.com, bestbuy.com,
+           microsoftstore.microsoft.com, dbrand.com, miir.com, matadorequipment.com, fluidstance.com,
+           happyearsearplugs.com, eufylife.com, josbank.com, menswearhouse.com, adobe.com, squidhaus.com,
+           blink.com, chrisheria.com, getsquire.com, bose.com, chipotle.com, sweetgreen.com,
+           choptsalad.com, tacobell.com, hbomax.com, ticketmaster.com, sxsw.com, warriors.com,
+           nflshop.com, gametime.co, squaremktg.com]
+  # CapWeb business mail — labeled, kept in inbox, consumed by skills/capweb-reconcile
+  "Arjun Capweb":
+    from: [capitalwebmasters.com, csznet.com]

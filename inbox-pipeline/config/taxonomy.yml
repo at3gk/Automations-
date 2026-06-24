@@ -1,0 +1,47 @@
+# taxonomy.yml — SINGLE SOURCE OF TRUTH for labels + archive policy.
+# Both the `inbox-triage` skill AND generate/build_filters.py derive from this file.
+# Do NOT hardcode labels anywhere else. See inbox-pipeline/docs/CONVENTIONS.md.
+#
+# Schema per category entry:
+#   label        full nested Gmail label path (e.g. "AI & Dev/Newsletters")
+#   archive      bool — if true, triage/filters remove it from the inbox after labeling
+#   keep_in_inbox  bool (optional) — explicit "label but keep visible"; default true
+#   notes        optional human note
+#
+# Top-level:
+#   review_label      bucket for no-confident-match mail; stays in inbox
+#   preserved_labels  pre-existing labels the system must NEVER create, modify, or duplicate
+version: 1
+
+review_label: "Review/Unsorted"     # no-confident-match bucket; stays in inbox
+
+preserved_labels:                    # pre-existing; do not modify or duplicate
+  - "Personal"
+  - "Receipts"
+  - "Arjun Capweb"
+  - "Arjun Capweb/Accounting CapWeb"
+  - "Wedding Janks"
+  - "Conversation History"
+  - "Everything Relocation"
+  - "Datacamp"
+  - "Jules"
+  - "Work"
+
+categories:
+  - { label: "AI & Dev/Newsletters",       archive: false }
+  - { label: "AI & Dev/Learning",          archive: false }
+  - { label: "AI & Dev/Dev Tools",         archive: false }
+  - { label: "Finance/Banking & Cards",    archive: false }
+  - { label: "Finance/Investing",          archive: false }
+  - { label: "Home & Living/Apartment",    archive: false }
+  - { label: "Home & Living/Real Estate",  archive: false }
+  - { label: "Home & Living/Relocation",   archive: false }
+  - { label: "Pets",                       archive: false, notes: "mixed orders + promos; keep visible" }
+  - { label: "Health",                     archive: false }
+  - { label: "Auto",                       archive: false }
+  - { label: "Travel",                     archive: false }
+  - { label: "Career",                     archive: false }
+  - { label: "Accounts & Security",        archive: false }
+  - { label: "Civic & Charity",            archive: false }
+  - { label: "Reading",                    archive: false }
+  - { label: "Shopping & Deals",           archive: true,  notes: "labeled AND archived out of inbox" }

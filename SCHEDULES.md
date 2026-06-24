@@ -118,6 +118,39 @@ that skill's `SKILL.md`. To set up (or rebuild on a new account):
 
 ---
 
+## 🔁 Inbox pipeline (run the producer before the consumers)
+
+These six form a producer→consumer pipeline. **`inbox-triage` must run first** and leave a fresh
+`inbox-state.json` (within 36h) before any `brief-*` / `capweb-reconcile` run — schedule triage
+earlier in the morning than its consumers. See `inbox-pipeline/docs/CONVENTIONS.md`.
+
+### inbox-triage (PRODUCER) — Daily ~07:30 — Cloud
+- **Prompt (propose / read-only):** `Run the inbox-triage skill in propose mode and post the [Triage] draft.`
+- **Prompt (apply / actually label+archive):** `Run the inbox-triage skill in apply mode: label and archive per taxonomy, write inbox-state.json, and post the [Triage] draft.`
+- **Needs in CONFIG.md:** Drive state folder name; config lives in `inbox-pipeline/config/*.yml`.
+
+### brief-ai-learning — Daily ~08:00 (after triage) — Cloud
+- **Prompt:** `Run the brief-ai-learning skill and draft the AI Learning brief.`
+- **Needs in CONFIG.md:** nothing (reads labels + inbox-state.json).
+
+### brief-finance — Weekly Mon ~08:00 (after triage) — Cloud
+- **Prompt:** `Run the brief-finance skill and draft the Finance brief.`
+- **Needs in CONFIG.md:** nothing (read-only; never pays).
+
+### brief-career — Weekly Mon ~08:00 (after triage) — Cloud
+- **Prompt:** `Run the brief-career skill and draft the Career brief.`
+- **Needs in CONFIG.md:** nothing.
+
+### brief-travel — Daily ~07:00 (after triage) — Cloud
+- **Prompt:** `Run the brief-travel skill and draft the Travel brief.`
+- **Needs in CONFIG.md:** nothing.
+
+### capweb-reconcile — Weekly Fri ~16:00 (after triage) — Cloud
+- **Prompt:** `Run the capweb-reconcile skill and draft the [Brief: Capweb] payment proposal (propose only — never pay).`
+- **Needs in CONFIG.md:** CapWeb confidence floor (optional); Drive state folder.
+
+---
+
 ### Rebuilding on a new account
 Reconnect connectors, fill `CONFIG.md`, then paste the blocks above for whichever skills you want.
 Nothing here contains account-specific data, so this file transfers as-is.

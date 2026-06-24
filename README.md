@@ -91,6 +91,32 @@ scheduled task: it just invokes the skill, which holds the logic.
 | `inbox-triage-drafts` | optional | Daily, ~8:00 | Cloud | Gmail | Run the inbox-triage-drafts skill; categorize unread and draft routine replies (do not send). |
 | `receipts-and-expenses` | optional | Weekly, Fri ~16:00 | Cloud | Gmail, Drive | Run the receipts-and-expenses skill and post receipts to file. |
 | `automation-auditor` | ✅ on | Monthly, 1st ~9:00 | Cloud | all available | Run the automation-auditor skill and suggest new automations (do not create them). |
+| `inbox-triage` | optional | Daily, ~7:30 | Cloud | Gmail, Drive | Run the inbox-triage skill in propose mode and post the [Triage] draft. _(Say "apply" to label/archive.)_ |
+| `brief-ai-learning` | optional | Daily, ~8:00 (after triage) | Cloud | Gmail, Drive | Run the brief-ai-learning skill and draft the AI Learning brief. |
+| `brief-finance` | optional | Weekly, Mon ~8:00 (after triage) | Cloud | Gmail, Drive | Run the brief-finance skill and draft the Finance brief. |
+| `brief-career` | optional | Weekly, Mon ~8:00 (after triage) | Cloud | Gmail, Drive | Run the brief-career skill and draft the Career brief. |
+| `brief-travel` | optional | Daily, ~7:00 (after triage) | Cloud | Gmail, Drive | Run the brief-travel skill and draft the Travel brief. |
+| `capweb-reconcile` | optional | Weekly, Fri ~16:00 (after triage) | Cloud | Gmail, Drive | Run the capweb-reconcile skill and draft the [Brief: Capweb] payment proposal. |
+
+## The `inbox-pipeline` subsystem (producer → consumers)
+
+Six of the skills above form a small **pipeline** rather than standing alone, with their shared
+machinery in [`inbox-pipeline/`](./inbox-pipeline/):
+
+- **Producer — `inbox-triage`** labels/archives the unlabeled tail of your inbox from
+  `inbox-pipeline/config/*.yml` (the single source of truth) and writes the Drive manifest
+  `inbox-state.json`. It also generates importable **Gmail filters** so the server does the bulk
+  (`python inbox-pipeline/generate/build_filters.py`).
+- **Consumers — `brief-*` and `capweb-reconcile`** read that manifest, query Gmail **by label**, and
+  deliver Gmail **drafts**. Run the producer first (the manifest must be fresh). `capweb-reconcile`
+  is deterministic and human-in-the-loop: it reconciles timesheets↔invoices with exact-dollar
+  matching and only ever **proposes** payments — it never pays.
+
+This subsystem follows the same kit rules (logic in skills, state in Drive, no secrets in git). The
+one extension to "drafts not actions": `inbox-triage` may **label and archive** mail, but only in
+explicit **apply** mode, only within `taxonomy.yml` policy, capped by an anomaly guard, and never
+deleting. See [`inbox-pipeline/docs/CONVENTIONS.md`](./inbox-pipeline/docs/CONVENTIONS.md) for the
+full run contract and [`inbox-pipeline/README.md`](./inbox-pipeline/README.md) for the layout.
 
 ## How each skill is built (so you can edit safely)
 
