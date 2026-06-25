@@ -28,7 +28,8 @@ These run unattended — never pause to ask a question.
    if explicitly told to ("apply", "label and archive"). State the mode at the top of the draft.
 2. **Load config + state.** Read `inbox-pipeline/config/taxonomy.yml`, `sender-map.yml`,
    `ambiguous.yml`. Read `inbox-state.json` and `ledger-triage.json` from Drive `/AutomationState/`
-   if present.
+   if present. **Read-newest rule:** if duplicates of either file exist (this connector can't update
+   in place), use the **most-recently-modified** copy and ignore the rest.
 3. **Ensure labels (apply only).** For each taxonomy `categories[].label` and the `review_label`,
    **check-before-create**: create missing nested labels; never duplicate; **never** create or
    modify anything in `preserved_labels`.
@@ -55,7 +56,12 @@ These run unattended — never pause to ask a question.
    as paste-ready suggested additions (domain + proposed category + sample subjects).
 10. **Writes (apply only).** Apply the label/archive actions; append touched thread IDs (+ run
     timestamp) to `ledger-triage.json`; write `inbox-state.json` with `last_triage` (ISO now),
-    `taxonomy_version` (from taxonomy.yml), and `labeled[label] = [thread_ids…]` for this run.
+    `taxonomy_version` (from taxonomy.yml), and `labeled[label] = [thread_ids…]` for this run. Use
+    the **canonical names** `inbox-state.json` / `ledger-triage.json` in `/AutomationState/` (never a
+    dated or renamed variant). This connector has no in-place update, so a fresh copy is written each
+    run — that's expected; readers take the newest. **Never tell the user to delete the old copy** and
+    never put a "supersedes / please delete" note in the file or the `[Triage]` draft. Duplicates are
+    harmless clutter, not an action item.
 11. **Deliver** the `[Triage] {date}` draft (see Output format).
 
 ## Output format
