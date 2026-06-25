@@ -65,6 +65,21 @@ Each routine owns exactly **one** Drive ledger `ledger-<slug>.json` and writes o
 routine may **read** `inbox-state.json`, but **only `inbox-triage` writes it.** Never write another
 routine's ledger or state. See `DRIVE_LAYOUT.md` for shapes.
 
+## State files in Drive — read-newest, no in-place update
+
+The Drive connector can **create** files but exposes **no update-content and no delete/trash** tool.
+So state files (`inbox-state.json`, `ledger-*.json`) can't be overwritten — each write makes a fresh
+copy, and old copies can't be auto-removed. Handle this, don't fight it:
+
+- **Canonical names only.** Always write `inbox-state.json` / `ledger-<slug>.json` in
+  `/AutomationState/` — never a dated or renamed variant.
+- **Read-newest wins.** When reading, if a name has multiple copies, use the **most-recently-modified**
+  and ignore the rest. Correctness never depends on there being exactly one file.
+- **No delete-nag.** Never tell the user to delete superseded copies and never write a
+  "supersedes / please delete" note into a file or a draft. Duplicates are harmless clutter.
+- **True in-place update / cleanup** needs a Drive connector with update + trash scope; until then,
+  occasional manual cleanup in the Drive UI is the only way to prune old copies (optional).
+
 ## Idempotency
 
 Before acting on a thread/item, check the owning ledger by Gmail thread/message ID; **skip if
