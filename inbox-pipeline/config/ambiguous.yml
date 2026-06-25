@@ -14,3 +14,5 @@ never_autofile:
   - { match: "ghost.io",                    reason: "shared newsletter platform; topic varies by sender" }
   - { match: "thestretch@mail.beehiiv.com", reason: "beehiiv platform; topic unconfirmed" }
   - { match: "tmindset@substack.com",       reason: "productivity newsletter; not clearly AI or Reading" }
+  - { match: "customer.verizon.com",         reason: "carrier sends both billing notices and plan promos from this address" }
+  - { match: "ecrm-mail.verizon.com",        reason: "Verizon notifications — billing vs marketing varies by message" }

@@ -13,7 +13,8 @@ version: 1
 categories:
   "AI & Dev/Newsletters":
     from: [tldrnewsletter.com, aiagentssimplified@substack.com, aitechin@substack.com,
-           kenhuangus@substack.com, systemdesignone@substack.com, hexgarcia.com, scaleupmedia.com]
+           kenhuangus@substack.com, systemdesignone@substack.com, hexgarcia.com, scaleupmedia.com,
+           diamantai@substack.com]
   "AI & Dev/Learning":
     from: [datacamp.com, maven.com, parlance-labs.com, ideabrowser.com, scribehow.com]
   "AI & Dev/Dev Tools":
@@ -54,7 +55,13 @@ categories:
            happyearsearplugs.com, eufylife.com, josbank.com, menswearhouse.com, adobe.com, squidhaus.com,
            blink.com, chrisheria.com, getsquire.com, bose.com, chipotle.com, sweetgreen.com,
            choptsalad.com, tacobell.com, hbomax.com, ticketmaster.com, sxsw.com, warriors.com,
-           nflshop.com, gametime.co, squaremktg.com]
+           nflshop.com, gametime.co, squaremktg.com, googlestore-noreply@google.com]
+  # Transactional order/payment mail from overloaded senders (e.g. Amazon) — routed by SUBJECT,
+  # kept VISIBLE (archive:false in taxonomy). Sender (from) matches always win over these, so
+  # domain-mapped retailers like chewy.com still go to their own category, not here.
+  "Shopping & Deals/Orders":
+    subject: ["Ordered:", "Shipped:", "Delivered:", "Subscribe & Save",
+              "We have processed your payment", "Amazon Pay"]
   # CapWeb business mail — labeled, kept in inbox, consumed by .claude/skills/capweb-reconcile
   "Arjun Capweb":
     from: [capitalwebmasters.com, csznet.com]

@@ -45,3 +45,4 @@ categories:
   - { label: "Civic & Charity",            archive: false }
   - { label: "Reading",                    archive: false }
   - { label: "Shopping & Deals",           archive: true,  notes: "labeled AND archived out of inbox" }
+  - { label: "Shopping & Deals/Orders",     archive: false, notes: "order tracking + payment confirmations; kept VISIBLE, never archived" }
