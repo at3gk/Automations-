@@ -78,6 +78,27 @@ so it lives in its own files (the single source of truth). This section is just 
 
 No secrets here — Gmail/Drive access comes from the connectors you reconnect per account.
 
+### Brief delivery (how the `brief-*` lenses reach you)
+
+The light `brief-*` lenses consolidate into **one calendar event per day** (a `📋 Daily Briefs`
+event with a reminder) instead of a pile of separate Gmail drafts — first lens to run creates it,
+the rest append their own section. Set how you want it delivered:
+
+- **Channel:** << calendar >>  (`calendar` = consolidated event · `draft` = legacy Gmail draft · `both`)
+- **Calendar for briefs:** << primary >>  (calendar ID, or `primary`)
+- **Daily event title:** << "📋 Daily Briefs" >>  (the date is appended automatically)
+- **Reading time (local):** << 07:00 >>  (when the event starts / your nudge to sit and read)
+- **Reminder lead:** << 0 >> minutes before  (popup ping; `0` = exactly at the reading time)
+- **Event color:** << 5 >>  (Google color ID 1–11; `5` = Banana, stands out)
+
+> **Timing dependency:** the event/reminder fires at the reading time, so every `brief-*` lens (and
+> `inbox-triage` before them) must be **scheduled to run earlier than this** — otherwise the reminder
+> fires before the brief exists. Default schedule: triage ~06:30, lenses staggered 06:40–06:55,
+> event 07:00 (see `SCHEDULES.md`).
+
+Timezone is taken from **Identity → Timezone** above. Note: `capweb-reconcile` is **not** part of
+this consolidation — its payment proposals stay in a private Gmail draft, never a calendar event.
+
 ## Connector choices (swap per account)
 
 The kit assumes **Google Workspace** (Gmail, Calendar, Drive) and **GitHub**. Where a skill

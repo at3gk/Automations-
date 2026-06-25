@@ -1,11 +1,12 @@
 ---
 name: brief-ai-learning
 description: >-
-  An inbox-pipeline CONSUMER lens. Reads the AI & Dev labels triaged into your inbox and drafts a
+  An inbox-pipeline CONSUMER lens. Reads the AI & Dev labels triaged into your inbox and compiles a
   prioritized [Brief: AI Learning] of genuinely NEW, learnable things (model releases, methods,
   tools, notable papers) — skipping generic news/funding/marketing. Use when asked for an "AI
-  learning brief", "what's new in AI for my stack", or on a schedule. Requires Gmail + Drive
-  (reads inbox-state.json). Instantiates inbox-pipeline/brief-engine.md.
+  learning brief", "what's new in AI for my stack", or on a schedule. Requires Gmail + Drive +
+  Calendar (delivers into the shared Daily Briefs event; reads inbox-state.json). Instantiates
+  inbox-pipeline/brief-engine.md.
 ---
 
 # Brief: AI Learning (consumer lens)
@@ -24,12 +25,12 @@ description: >-
 - **{{OUTPUT_FIELDS}}** = *what it is* / *why it matters to my stack* / *one concrete next step*
 - **{{PRIORITY_RUBRIC}}** = relevance to my stack × actionability
 - **{{FOCUS}}** = agentic orchestration, harness engineering, integration/tooling
-- **{{DRAFT_PREFIX}}** = `Brief: AI Learning`  → draft `[Brief: AI Learning] {date}`
+- **{{DRAFT_PREFIX}}** = `Brief: AI Learning`  → section `### Brief: AI Learning` in the Daily Briefs event
 - **{{MAX_ITEMS}}** = 12
 
 ## Guardrails
-- Read-only except its own draft + (in apply) `ledger-ai-learning.json`. Never labels, archives,
-  writes `inbox-state.json`, or touches another routine's ledger.
+- Read-only except its own section of the Daily Briefs event + (in apply) `ledger-ai-learning.json`.
+  Never labels, archives, writes `inbox-state.json`, or touches another routine's ledger or section.
 - Skips items already in its ledger (no re-briefing). Notes overflow past 12.
 - Complements the kit's `industry-digest` (broad web scan): this lens is label-scoped to mail
   already triaged and filtered for *learnable* signal relevant to your stack.

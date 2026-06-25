@@ -14,7 +14,8 @@ engine code** — that's the proof the engine works.
    frontmatter `name`/`description` so the kit auto-discovers it.
 4. **Register it** the kit way: add a row to the root `README.md` skills table and a block to
    `SCHEDULES.md`; add an entry to `pipeline.json` (`kind: consumer`, its `reads`/`writes`,
-   `draft_prefix`) and to `run_order` (after `inbox-triage`).
+   `section_prefix`) and to `run_order` (after `inbox-triage`). Stagger its schedule a few minutes
+   off the other lenses so they don't race to create the day's Daily Briefs event.
 5. Done. The new ledger `ledger-<slug>.json` is created on first `apply` run in Drive — nothing to
    set up.
 
@@ -29,9 +30,10 @@ engine code** — that's the proof the engine works.
 {{OUTPUT_FIELDS}}       # per-item fields, e.g. what / date / action
 {{PRIORITY_RUBRIC}}     # ordering, e.g. soonest date first
 {{FOCUS}}               # optional emphasis
-{{DRAFT_PREFIX}}        # e.g. Brief: Health   -> draft "[Brief: Health] {date}"
+{{DRAFT_PREFIX}}        # e.g. Brief: Health   -> section "### Brief: Health" in the Daily Briefs event
 {{MAX_ITEMS}}           # cap, e.g. 10
 ```
 
-The engine body (`brief-engine.md`) handles state/staleness/idempotency/pagination/draft delivery —
-you only describe *what* this lens looks for.
+The engine body (`brief-engine.md`) handles state/staleness/idempotency/pagination and delivery
+(upserting your section into the consolidated Daily Briefs event) — you only describe *what* this
+lens looks for.

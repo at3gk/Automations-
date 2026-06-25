@@ -11,12 +11,13 @@ auto-discovers and schedules them with no install step.
 - **Producer — `.claude/skills/inbox-triage`.** Labels/archives the unlabeled tail of the inbox from
   `config/*.yml` and writes the Drive manifest `inbox-state.json`. Everything else depends on it.
 - **Consumers — `.claude/skills/brief-*` + `.claude/skills/capweb-reconcile`.** Read the manifest,
-  query Gmail **by label**, and deliver a Gmail **draft**. Light briefs are thin lenses over
-  `brief-engine.md`; CapWeb is the heavy, deterministic exception.
+  query Gmail **by label**, and **deliver**. The light `brief-*` lenses consolidate into one
+  **Daily Briefs calendar event** per day (with a reminder); CapWeb is the heavy, deterministic
+  exception (private Gmail draft). Light briefs are thin lenses over `brief-engine.md`.
 
 Three conventions chain them into a pipeline: **consistent labels** (`config/taxonomy.yml`), the
-**Drive manifest** (`inbox-state.json`), and **Gmail drafts** as the review surface. The full run
-contract is in [`docs/CONVENTIONS.md`](./docs/CONVENTIONS.md).
+**Drive manifest** (`inbox-state.json`), and a single **review surface** per run (the consolidated
+brief event, or a draft). The full run contract is in [`docs/CONVENTIONS.md`](./docs/CONVENTIONS.md).
 
 ## What's here
 

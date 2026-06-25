@@ -17,7 +17,7 @@ see `docs/ADDING_A_BRIEF.md`.
 | `{{OUTPUT_FIELDS}}` | the per-item fields to emit |
 | `{{PRIORITY_RUBRIC}}` | how to order items |
 | `{{FOCUS}}` | lens on what matters (optional emphasis) |
-| `{{DRAFT_PREFIX}}` | draft title prefix, e.g. `Brief: AI Learning` |
+| `{{DRAFT_PREFIX}}` | section heading in the Daily Briefs event (and, if a draft is also kept, the draft title prefix), e.g. `Brief: AI Learning` |
 | `{{MAX_ITEMS}}` | cap; note overflow if exceeded |
 
 ## Procedure (engine body)
@@ -39,20 +39,54 @@ idempotency, staleness, least privilege).
 6. **Emit.** For each kept item, produce `{{OUTPUT_FIELDS}}`.
 7. **Prioritize.** Order by `{{PRIORITY_RUBRIC}}`, applying `{{FOCUS}}`. Cap at `{{MAX_ITEMS}}`;
    if more remain, keep the top `{{MAX_ITEMS}}` and **note the overflow count**.
-8. **Deliver.** Create a Gmail **draft** titled `[{{DRAFT_PREFIX}}] {date}`, top items first, with
-   the mode (propose/apply) stated at the top and the staleness note if `STALE`.
+8. **Deliver — upsert the consolidated Daily Briefs event.** Read the **Brief delivery** settings
+   from `CONFIG.md` (`channel`, calendar, title, reading time, reminder lead, color, timezone).
+   All lenses share **one event per day**; each owns one section of it. Unless `channel` is `draft`
+   only:
+   1. **Find today's event.** `list_events` on the brief calendar for `{date}` (local
+      midnight→midnight); match the event whose description contains the marker `[auto:daily-briefs]`
+      and whose title starts with the configured title (`fullText:"[auto:daily-briefs]"` narrows it).
+   2. **Create if missing.** `create_event`: `summary = "{title} — {date}"`; `startTime` at the
+      configured reading time on `{date}` in your CONFIG timezone (omit `timeZone` to inherit the
+      primary calendar's zone); 30-minute block; `availability = AVAILABILITY_FREE` (don't show as
+      busy); `colorId` = configured color; `visibility = private`;
+      `overrideReminders = [{method:"popup", minutes:<reminder lead>}]`. Seed `description` with the
+      header `📋 {title} — {date}   (mode: …)`, a one-line note, and the marker `[auto:daily-briefs]`.
+   3. **Upsert THIS lens's section.** The lens owns the block delimited by
+      `<!-- {{SLUG}}:start -->` … `<!-- {{SLUG}}:end -->`. Build the section (skeleton below).
+      **Replace** that block if present (idempotent re-run); else **insert** it just before the
+      trailing marker. Preserve every other lens's block **byte-for-byte**, and don't change the
+      event's start time or reminders. `update_event` with the full new `description` (refresh only
+      the header's mode tag).
+   4. **Concurrency guard.** If more than one matching event exists for `{date}` (two lenses raced
+      the create), write to the **earliest-created** one and note "duplicate Daily Briefs event —
+      merge manually." Staggering lenses a few minutes apart (see `SCHEDULES.md`) avoids this.
+   5. **Overflow.** Calendar descriptions hold ~8 KB; the `{{MAX_ITEMS}}` cap keeps a section small.
+      If the combined description would exceed that, keep this lens's top items, note the overflow,
+      and (when `channel` includes `draft`) rely on the draft for the full list.
+   - If `channel` is `draft` or `both`: also create the Gmail **draft** titled `[{{DRAFT_PREFIX}}]
+     {date}` with the full brief (legacy behavior). `draft`-only skips the calendar entirely.
+   - **Delivery runs in BOTH propose and apply modes** — the event/draft is the brief's output, not
+     a world-action (it's on your own calendar and reversible). Only step 9's ledger write is
+     apply-gated. State the mode in both the event header and the section heading.
 9. **Apply mode only.** Append the briefed IDs (+ run timestamp) to `ledger-{{SLUG}}.json`. Never
    modify labels/archive, never write `inbox-state.json`, never touch another routine's ledger.
 
 ## Output skeleton
 
-```
-[{{BRIEF_NAME}}] Brief — {date}   (mode: propose|apply)
-<staleness note, only if triage stale/missing>
+The event wraps all lenses; each lens writes only its own delimited section:
 
+```
+📋 Daily Briefs — {date}   (mode: propose|apply)
+Your daily briefs, consolidated. Each lens fills its section as it runs.
+[auto:daily-briefs]
+
+<!-- {{SLUG}}:start -->
+### {{DRAFT_PREFIX}}   (N items · mode: propose|apply)
+<staleness note, only if triage stale/missing>
 1. <highest-priority item> — {{OUTPUT_FIELDS}}
 2. ...
-
 (+N more not shown — raise {{MAX_ITEMS}} or narrow the window)
 Skipped ~N off-topic items.
+<!-- {{SLUG}}:end -->
 ```

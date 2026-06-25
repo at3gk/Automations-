@@ -1,10 +1,11 @@
 ---
 name: brief-career
 description: >-
-  An inbox-pipeline CONSUMER lens. Reads the Career label triaged into your inbox and drafts a
+  An inbox-pipeline CONSUMER lens. Reads the Career label triaged into your inbox and compiles a
   prioritized [Brief: Career] of relevant roles, deadlines, intro/networking asks, and application
   status. Use when asked for a "career brief", "job/networking roundup", or on a schedule. Requires
-  Gmail + Drive (reads inbox-state.json). Instantiates inbox-pipeline/brief-engine.md.
+  Gmail + Drive + Calendar (delivers into the shared Daily Briefs event; reads inbox-state.json).
+  Instantiates inbox-pipeline/brief-engine.md.
 ---
 
 # Brief: Career (consumer lens)
@@ -22,10 +23,10 @@ description: >-
 - **{{OUTPUT_FIELDS}}** = *what* / *who* / *deadline* / *suggested action*
 - **{{PRIORITY_RUBRIC}}** = deadline, then fit
 - **{{FOCUS}}** = time-bound opportunities and warm intros first
-- **{{DRAFT_PREFIX}}** = `Brief: Career`  → draft `[Brief: Career] {date}`
+- **{{DRAFT_PREFIX}}** = `Brief: Career`  → section `### Brief: Career` in the Daily Briefs event
 - **{{MAX_ITEMS}}** = 10
 
 ## Guardrails
-- Read-only except its own draft + (in apply) `ledger-career.json`. Never replies or applies on your
-  behalf — drafts/surfaces only.
+- Read-only except its own section of the Daily Briefs event + (in apply) `ledger-career.json`.
+  Never replies or applies on your behalf — surfaces only.
 - Skips items already in its ledger. Notes overflow past 10.

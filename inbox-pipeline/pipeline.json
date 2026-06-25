@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Declarative map of the inbox-pipeline. An orchestrator MUST verify the producer ran (fresh inbox-state.json.last_triage, within max_staleness) before running any consumer. State lives in Drive /AutomationState/, never in git.",
+  "note": "Declarative map of the inbox-pipeline. An orchestrator MUST verify the producer ran (fresh inbox-state.json.last_triage, within max_staleness) before running any consumer. The light brief-* lenses deliver into ONE shared Daily Briefs calendar event per day (each owns a delimited section; see brief-engine.md step 8 + CONFIG.md Brief delivery); stagger them so they don't race the create. State lives in Drive /AutomationState/, never in git.",
   "max_staleness_hours": 36,
   "routines": [
     {
@@ -16,32 +16,32 @@
       "skill": ".claude/skills/brief-ai-learning",
       "kind": "consumer",
       "reads": ["inbox-state.json", "Gmail (by label)"],
-      "writes": ["ledger-ai-learning.json", "Gmail draft"],
-      "draft_prefix": "[Brief: AI Learning]"
+      "writes": ["ledger-ai-learning.json", "Daily Briefs event (own section)"],
+      "section_prefix": "[Brief: AI Learning]"
     },
     {
       "id": "brief-finance",
       "skill": ".claude/skills/brief-finance",
       "kind": "consumer",
       "reads": ["inbox-state.json", "Gmail (by label)"],
-      "writes": ["ledger-finance.json", "Gmail draft"],
-      "draft_prefix": "[Brief: Finance]"
+      "writes": ["ledger-finance.json", "Daily Briefs event (own section)"],
+      "section_prefix": "[Brief: Finance]"
     },
     {
       "id": "brief-career",
       "skill": ".claude/skills/brief-career",
       "kind": "consumer",
       "reads": ["inbox-state.json", "Gmail (by label)"],
-      "writes": ["ledger-career.json", "Gmail draft"],
-      "draft_prefix": "[Brief: Career]"
+      "writes": ["ledger-career.json", "Daily Briefs event (own section)"],
+      "section_prefix": "[Brief: Career]"
     },
     {
       "id": "brief-travel",
       "skill": ".claude/skills/brief-travel",
       "kind": "consumer",
       "reads": ["inbox-state.json", "Gmail (by label)"],
-      "writes": ["ledger-travel.json", "Gmail draft"],
-      "draft_prefix": "[Brief: Travel]"
+      "writes": ["ledger-travel.json", "Daily Briefs event (own section)"],
+      "section_prefix": "[Brief: Travel]"
     },
     {
       "id": "capweb-reconcile",
