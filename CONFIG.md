@@ -78,6 +78,16 @@ so it lives in its own files (the single source of truth). This section is just 
 
 No secrets here — Gmail/Drive access comes from the connectors you reconnect per account.
 
+### Inbox triage (backfill pacing + safety guards)
+
+`inbox-triage` processes the inbox **newest-first, capped per run**, so a large backlog drains over
+several daily runs instead of one runaway session. (Only the *first* run looks at the whole inbox;
+every run after sees just the unlabeled tail + new mail.)
+
+- **Per-run batch cap:** << 200 >> newest threads  (raise to drain a backlog faster; lower for shorter sessions)
+- **Archive hard-halt cap:** << 50 >> threads  (archiving is the only semi-destructive action — the run halts and applies nothing if exceeded)
+- **Unknown-sender halt fraction:** << 60 >> % of the batch  (above this ⇒ likely broken sender map ⇒ halt; below ⇒ normal backlog, senders just suggested)
+
 ### Brief delivery (how the `brief-*` lenses reach you)
 
 The light `brief-*` lenses consolidate into **one calendar event per day** (a `📋 Daily Briefs`
