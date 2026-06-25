@@ -2,16 +2,17 @@
 
 A Gmail + Google Drive **producer→consumer pipeline** that lives inside the Personal Automations
 Kit. It is the home for the *shared, non-skill machinery* (config, generators, the brief engine,
-JSON schemas, deterministic CapWeb code, docs). The runnable routines are kit **skills** under the
-repo's top-level `skills/` so the plugin auto-discovers and schedules them like every other skill.
+JSON schemas, deterministic CapWeb code, docs). The runnable routines are **project skills** under
+`.claude/skills/`, so any Claude Code session that clones this repo (including cloud sessions)
+auto-discovers and schedules them with no install step.
 
 ## Mental model
 
-- **Producer — `skills/inbox-triage`.** Labels/archives the unlabeled tail of the inbox from
+- **Producer — `.claude/skills/inbox-triage`.** Labels/archives the unlabeled tail of the inbox from
   `config/*.yml` and writes the Drive manifest `inbox-state.json`. Everything else depends on it.
-- **Consumers — `skills/brief-*` + `skills/capweb-reconcile`.** Read the manifest, query Gmail **by
-  label**, and deliver a Gmail **draft**. Light briefs are thin lenses over `brief-engine.md`;
-  CapWeb is the heavy, deterministic exception.
+- **Consumers — `.claude/skills/brief-*` + `.claude/skills/capweb-reconcile`.** Read the manifest,
+  query Gmail **by label**, and deliver a Gmail **draft**. Light briefs are thin lenses over
+  `brief-engine.md`; CapWeb is the heavy, deterministic exception.
 
 Three conventions chain them into a pipeline: **consistent labels** (`config/taxonomy.yml`), the
 **Drive manifest** (`inbox-state.json`), and **Gmail drafts** as the review surface. The full run
@@ -29,8 +30,9 @@ pipeline.json  producer/consumer manifest + run_order
 dist/, state/  generated/scratch — gitignored
 ```
 
-The skills themselves: `skills/inbox-triage`, `skills/brief-ai-learning`, `skills/brief-finance`,
-`skills/brief-career`, `skills/brief-travel`, `skills/capweb-reconcile`.
+The skills themselves: `.claude/skills/inbox-triage`, `.claude/skills/brief-ai-learning`,
+`.claude/skills/brief-finance`, `.claude/skills/brief-career`, `.claude/skills/brief-travel`,
+`.claude/skills/capweb-reconcile`.
 
 ## Regenerate filters / validate config
 

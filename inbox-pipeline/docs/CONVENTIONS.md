@@ -12,7 +12,7 @@ restating it. This contract sits *on top of* the kit's global rules in the repo 
 - **Consumers — `brief-*` and `capweb-reconcile`.** Each reads the manifest, queries Gmail **by
   label** (never the raw inbox), extracts what matters, and delivers a Gmail **draft**. Most briefs
   are thin lenses over the shared `brief-engine.md`. CapWeb is the heavy exception (deterministic
-  reconciliation; see `skills/capweb-reconcile`).
+  reconciliation; see `.claude/skills/capweb-reconcile`).
 
 Three shared conventions make these chain into a pipeline, not a pile of scripts: **consistent
 labels** (from `config/taxonomy.yml`), the **Drive state manifest** (`inbox-state.json`), and

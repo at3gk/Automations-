@@ -2,7 +2,7 @@
 
 Every light `brief-*` lens is an instance of this one procedure. A lens supplies the slot values
 below; the engine is the shared body. (CapWeb does **not** use this engine for its reconciliation —
-it delegates to `skills/capweb-reconcile`.) This keeps "adding a brief" to filling a slot table —
+it delegates to `.claude/skills/capweb-reconcile`.) This keeps "adding a brief" to filling a slot table —
 see `docs/ADDING_A_BRIEF.md`.
 
 ## Slots a lens must fill

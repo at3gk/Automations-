@@ -55,6 +55,6 @@ categories:
            blink.com, chrisheria.com, getsquire.com, bose.com, chipotle.com, sweetgreen.com,
            choptsalad.com, tacobell.com, hbomax.com, ticketmaster.com, sxsw.com, warriors.com,
            nflshop.com, gametime.co, squaremktg.com]
-  # CapWeb business mail — labeled, kept in inbox, consumed by skills/capweb-reconcile
+  # CapWeb business mail — labeled, kept in inbox, consumed by .claude/skills/capweb-reconcile
   "Arjun Capweb":
     from: [capitalwebmasters.com, csznet.com]

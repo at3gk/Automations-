@@ -8,7 +8,7 @@ engine code** — that's the proof the engine works.
 1. **Pick a label to read.** It must already exist in `config/taxonomy.yml` (and usually be fed by
    `config/sender-map.yml`). If it's a brand-new category, add it to the config first and re-run
    `generate/validate_config.py` + `generate/build_filters.py`.
-2. **Copy a sibling skill.** `cp -r ../../skills/brief-career ../../skills/brief-<name>` is the
+2. **Copy a sibling skill.** `cp -r .claude/skills/brief-career .claude/skills/brief-<name>` (from the repo root) is the
    fastest start (career is the simplest single-label lens).
 3. **Fill the slot table** in the new `SKILL.md` (see the template below) and rewrite the
    frontmatter `name`/`description` so the kit auto-discovers it.

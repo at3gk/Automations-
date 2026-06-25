@@ -5,7 +5,7 @@
   "routines": [
     {
       "id": "inbox-triage",
-      "skill": "skills/inbox-triage",
+      "skill": ".claude/skills/inbox-triage",
       "kind": "producer",
       "reads": ["config/taxonomy.yml", "config/sender-map.yml", "config/ambiguous.yml", "inbox-state.json"],
       "writes": ["inbox-state.json", "ledger-triage.json", "Gmail labels", "Gmail archive"],
@@ -13,7 +13,7 @@
     },
     {
       "id": "brief-ai-learning",
-      "skill": "skills/brief-ai-learning",
+      "skill": ".claude/skills/brief-ai-learning",
       "kind": "consumer",
       "reads": ["inbox-state.json", "Gmail (by label)"],
       "writes": ["ledger-ai-learning.json", "Gmail draft"],
@@ -21,7 +21,7 @@
     },
     {
       "id": "brief-finance",
-      "skill": "skills/brief-finance",
+      "skill": ".claude/skills/brief-finance",
       "kind": "consumer",
       "reads": ["inbox-state.json", "Gmail (by label)"],
       "writes": ["ledger-finance.json", "Gmail draft"],
@@ -29,7 +29,7 @@
     },
     {
       "id": "brief-career",
-      "skill": "skills/brief-career",
+      "skill": ".claude/skills/brief-career",
       "kind": "consumer",
       "reads": ["inbox-state.json", "Gmail (by label)"],
       "writes": ["ledger-career.json", "Gmail draft"],
@@ -37,7 +37,7 @@
     },
     {
       "id": "brief-travel",
-      "skill": "skills/brief-travel",
+      "skill": ".claude/skills/brief-travel",
       "kind": "consumer",
       "reads": ["inbox-state.json", "Gmail (by label)"],
       "writes": ["ledger-travel.json", "Gmail draft"],
@@ -45,7 +45,7 @@
     },
     {
       "id": "capweb-reconcile",
-      "skill": "skills/capweb-reconcile",
+      "skill": ".claude/skills/capweb-reconcile",
       "kind": "consumer",
       "reads": ["inbox-state.json", "Gmail (by label)", "capweb/schemas/*.json"],
       "writes": ["ledger-capweb.json", "Gmail draft", "/AutomationState/scratch (transient)"],
