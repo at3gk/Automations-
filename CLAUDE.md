@@ -29,14 +29,18 @@ for the full skill table.
 
 `inbox-triage` (producer) labels/archives the unlabeled tail of Gmail from `inbox-pipeline/config/`
 and writes the Drive manifest `inbox-state.json`. The `brief-*` lenses and `capweb-reconcile`
-(consumers) read that manifest, query Gmail **by label**, and deliver Gmail **drafts**. Always run
-the producer first. Full contract: `inbox-pipeline/docs/CONVENTIONS.md`.
+(consumers) read that manifest and query Gmail **by label**. The light `brief-*` lenses **deliver
+into one shared "Daily Briefs" calendar event per day** (each owns a delimited section; reminder
+configurable in `CONFIG.md → Brief delivery`); `capweb-reconcile` delivers a private Gmail draft.
+Always run the producer first. Full contract: `inbox-pipeline/docs/CONVENTIONS.md`.
 
 ## Operating rules (apply to all routines)
 
 - **Drafts, not actions.** Outward/irreversible work is drafted, never sent. The one sanctioned
-  write is `inbox-triage` label/archive — and only in explicit **apply** mode, within
-  `taxonomy.yml` policy, capped by an anomaly guard, never deleting.
+  *outward* write is `inbox-triage` label/archive — and only in explicit **apply** mode, within
+  `taxonomy.yml` policy, capped by an anomaly guard, never deleting. The `brief-*` lenses also
+  upsert a **self-owned Daily Briefs calendar event** on your own calendar — a reversible, self-only
+  notification (not an outward action), delivered in both modes just as the old draft was.
 - **propose (default) / apply.** Default is read-only + a report draft; "apply" performs the
   routine's writes. State the mode at the top of every report.
 - **Code/config in git; data/state in Drive; secrets in env.** Ledgers, `inbox-state.json`,

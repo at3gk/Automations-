@@ -52,22 +52,22 @@ then add more once you feel the relief.
   surfaces and *suggests* which automations you actually need — this is how a kit like this
   tends to grow in the first place. It only suggests; it never creates skills on its own.
 
-## Cloud tasks vs. Cowork tasks
+## Cloud routines vs. Cowork tasks
 
-| | **Cloud task** (claude.ai/code/scheduled) | **Cowork task** (desktop app) |
+| | **Cloud routine** (claude.ai/code/routines) | **Cowork task** (desktop app) |
 |---|---|---|
-| Runs | Server-side | On your Mac |
+| Runs | Server-side (autonomous, no permission prompts) | On your Mac |
 | Needs laptop awake? | **No** | **Yes** (desktop app open) |
 | Best for | Must-arrive jobs (morning brief), cloud connectors | Jobs needing local files, `gh` CLI, local repos |
 
-**Rule of thumb:** put anything that *must* arrive on time (the morning brief, daily wins) on
-**Cloud** so a sleeping laptop never makes you miss it. Use **Cowork** for skills that read local
-files or shell out to `gh` against your local checkouts.
+**Rule of thumb:** put anything that *must* arrive on time (the morning brief, daily wins) on a
+**Cloud routine** so a sleeping laptop never makes you miss it. Use **Cowork** for skills that read
+local files or shell out to `gh` against your local checkouts.
 
 ## Schedule setup table
 
-Cadences are suggestions — adjust to taste. "Thin-trigger prompt" is the entire contents of the
-scheduled task: it just invokes the skill, which holds the logic.
+Cadences are suggestions — adjust to taste. "Thin-trigger prompt" is the entire **routine prompt**:
+it just invokes the skill, which holds the logic.
 
 > 📋 For **copy-paste-ready task blocks** (one per skill, with cadence, surface, the exact prompt,
 > and what each needs in `CONFIG.md`), see **[`SCHEDULES.md`](./SCHEDULES.md)** — that's the
@@ -98,11 +98,11 @@ scheduled task: it just invokes the skill, which holds the logic.
 | `inbox-triage-drafts` | optional | Daily, ~8:00 | Cloud | Gmail | Run the inbox-triage-drafts skill; categorize unread and draft routine replies (do not send). |
 | `receipts-and-expenses` | optional | Weekly, Fri ~16:00 | Cloud | Gmail, Drive | Run the receipts-and-expenses skill and post receipts to file. |
 | `automation-auditor` | ✅ on | Monthly, 1st ~9:00 | Cloud | all available | Run the automation-auditor skill and suggest new automations (do not create them). |
-| `inbox-triage` | optional | Daily, ~7:30 | Cloud | Gmail, Drive | Run the inbox-triage skill in propose mode and post the [Triage] draft. _(Say "apply" to label/archive.)_ |
-| `brief-ai-learning` | optional | Daily, ~8:00 (after triage) | Cloud | Gmail, Drive | Run the brief-ai-learning skill and draft the AI Learning brief. |
-| `brief-finance` | optional | Weekly, Mon ~8:00 (after triage) | Cloud | Gmail, Drive | Run the brief-finance skill and draft the Finance brief. |
-| `brief-career` | optional | Weekly, Mon ~8:00 (after triage) | Cloud | Gmail, Drive | Run the brief-career skill and draft the Career brief. |
-| `brief-travel` | optional | Daily, ~7:00 (after triage) | Cloud | Gmail, Drive | Run the brief-travel skill and draft the Travel brief. |
+| `inbox-triage` | optional | Daily, ~6:30 | Cloud | Gmail, Drive | Run the inbox-triage skill in propose mode and post the [Triage] draft. _(Say "apply" to label/archive.)_ |
+| `brief-ai-learning` | optional | Daily, ~6:45 (after triage) | Cloud | Gmail, Drive, Calendar | Run the brief-ai-learning skill and add the AI Learning brief to today's Daily Briefs event. |
+| `brief-finance` | optional | Weekly, Mon ~6:50 (after triage) | Cloud | Gmail, Drive, Calendar | Run the brief-finance skill and add the Finance brief to today's Daily Briefs event. |
+| `brief-career` | optional | Weekly, Mon ~6:55 (after triage) | Cloud | Gmail, Drive, Calendar | Run the brief-career skill and add the Career brief to today's Daily Briefs event. |
+| `brief-travel` | optional | Daily, ~6:40 (after triage) | Cloud | Gmail, Drive, Calendar | Run the brief-travel skill and add the Travel brief to today's Daily Briefs event. |
 | `capweb-reconcile` | optional | Weekly, Fri ~16:00 (after triage) | Cloud | Gmail, Drive | Run the capweb-reconcile skill and draft the [Brief: Capweb] payment proposal. |
 
 ## The `inbox-pipeline` subsystem (producer → consumers)
@@ -114,15 +114,18 @@ machinery in [`inbox-pipeline/`](./inbox-pipeline/):
   `inbox-pipeline/config/*.yml` (the single source of truth) and writes the Drive manifest
   `inbox-state.json`. It also generates importable **Gmail filters** so the server does the bulk
   (`python inbox-pipeline/generate/build_filters.py`).
-- **Consumers — `brief-*` and `capweb-reconcile`** read that manifest, query Gmail **by label**, and
-  deliver Gmail **drafts**. Run the producer first (the manifest must be fresh). `capweb-reconcile`
-  is deterministic and human-in-the-loop: it reconciles timesheets↔invoices with exact-dollar
-  matching and only ever **proposes** payments — it never pays.
+- **Consumers — `brief-*` and `capweb-reconcile`** read that manifest and query Gmail **by label**.
+  The light `brief-*` lenses **consolidate into one "Daily Briefs" calendar event per day** (each
+  owns a section, with a reminder you set in `CONFIG.md → Brief delivery`); `capweb-reconcile`
+  delivers a private Gmail draft. Run the producer first (the manifest must be fresh).
+  `capweb-reconcile` is deterministic and human-in-the-loop: it reconciles timesheets↔invoices with
+  exact-dollar matching and only ever **proposes** payments — it never pays.
 
 This subsystem follows the same kit rules (logic in skills, state in Drive, no secrets in git). The
-one extension to "drafts not actions": `inbox-triage` may **label and archive** mail, but only in
-explicit **apply** mode, only within `taxonomy.yml` policy, capped by an anomaly guard, and never
-deleting. See [`inbox-pipeline/docs/CONVENTIONS.md`](./inbox-pipeline/docs/CONVENTIONS.md) for the
+extensions to "drafts not actions": `inbox-triage` may **label and archive** mail (explicit **apply**
+mode only, within `taxonomy.yml` policy, anomaly-capped, never deleting), and the `brief-*` lenses
+**upsert a self-owned Daily Briefs event** on your own calendar (reversible, self-only — a
+notification, not an outward action). See [`inbox-pipeline/docs/CONVENTIONS.md`](./inbox-pipeline/docs/CONVENTIONS.md) for the
 full run contract and [`inbox-pipeline/README.md`](./inbox-pipeline/README.md) for the layout.
 
 ## How each skill is built (so you can edit safely)
@@ -160,9 +163,10 @@ competitor URLs, launch sources, your running "wins" doc name, brag-doc name, re
 follow-up threshold `N`, and your connector choices. **No secrets** — credentials stay in the
 connectors you reconnect per account.
 
-> **Running these as cloud routines:** connect this repo in [claude.ai/code](https://claude.ai/code)
-> and create scheduled tasks whose body is the thin-trigger prompt from the table above (e.g. *"Run
-> the inbox-triage skill in propose mode and post the [Triage] draft."*). The skills load from
-> `.claude/skills/` automatically — there is no plugin to install. See
-> [`SCHEDULES.md`](./SCHEDULES.md) for ready-to-paste task blocks and `CLAUDE.md` for how the repo
-> is laid out.
+> **Running these as cloud routines:** at [claude.ai/code/routines](https://claude.ai/code/routines)
+> click **New routine**, select this repo, attach the connectors the skill needs, and use the
+> thin-trigger prompt from the table above as the routine prompt (e.g. *"Run the inbox-triage skill
+> in propose mode and post the [Triage] draft."*). The skills load from `.claude/skills/`
+> automatically — there is no plugin to install. See [`SCHEDULES.md`](./SCHEDULES.md) for
+> ready-to-paste routine blocks (including a single chained **daily-briefs-pipeline**) and
+> `CLAUDE.md` for how the repo is laid out.
