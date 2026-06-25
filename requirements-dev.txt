@@ -1,0 +1,12 @@
+# Development dependencies — linting and tests.
+# Installed by the SessionStart hook so cloud sessions can lint and run the
+# CapWeb / generator test suites without a manual setup step.
+
+-r requirements.txt
+
+# Test runner (the capweb tests also run as plain `python` scripts, but pytest
+# gives nicer output and lets new tests use fixtures/parametrize).
+pytest>=8.0
+
+# Fast linter + formatter. Config lives in pyproject.toml.
+ruff>=0.6
