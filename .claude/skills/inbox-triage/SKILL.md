@@ -32,17 +32,25 @@ These run unattended — never pause to ask a question.
 3. **Ensure labels (apply only).** For each taxonomy `categories[].label` and the `review_label`,
    **check-before-create**: create missing nested labels; never duplicate; **never** create or
    modify anything in `preserved_labels`.
-4. **Scope the query.** First ever run → `in:inbox`. Otherwise → `in:inbox -has:userlabels`
-   (optionally `+ newer_than:{since last_triage}`). **Paginate to exhaustion; ignore
-   `resultCountEstimate`.**
+4. **Scope the query (capped, newest-first).** Order **newest-first**. First-ever run → `in:inbox`;
+   otherwise → `in:inbox -has:userlabels` (optionally `+ newer_than:{since last_triage}` once the
+   backlog is cleared). **Process at most `batch_cap` newest threads this run (CONFIG → Inbox triage;
+   default 200) — do NOT paginate past the cap.** This drains a large backlog over several daily runs
+   (≈ `batch_cap` − daily inflow per run) while keeping recent mail sorted promptly for the briefs.
+   Ignore `resultCountEstimate`, but **count how many unlabeled threads remain past the cap** for the
+   report so progress is visible.
 5. **Classify each thread** by highest-confidence sender-map match: **exact address > domain >
    subject**. No confident match → stage to `Review/Unsorted`, keep in inbox. Any `ambiguous.yml`
    hit → `Review/Unsorted` too (**never** the guessed category).
 6. **Idempotency.** Skip any thread already in `ledger-triage.json`.
 7. **Apply policy.** Matched category → its label; **archive only if that category's `archive:
    true`** (currently only `Shopping & Deals`). Never archive anything else.
-8. **Anomaly guard.** If this run would archive > **50** threads or surface > **25** unknown
-   senders, **stop and report the counts** instead of acting.
+8. **Anomaly guard.** **Hard-halt and apply nothing** if this run would archive > `archive_cap`
+   (CONFIG; default **50**) threads — archiving is the only semi-destructive action and always
+   warrants a human checkpoint. Unknown senders are **report-only** during a capped run (they're
+   staged to `Review/Unsorted`, never acted on destructively); halt only if unknown senders exceed
+   `unknown_halt_fraction` (CONFIG; default **60%**) of the batch, which signals a broken sender map
+   rather than a normal backlog. (The per-run `batch_cap` already bounds blast radius.)
 9. **Discover senders.** Collect senders with **≥3 hits this run** that aren't in `sender-map.yml`
    as paste-ready suggested additions (domain + proposed category + sample subjects).
 10. **Writes (apply only).** Apply the label/archive actions; append touched thread IDs (+ run
@@ -53,6 +61,7 @@ These run unattended — never pause to ask a question.
 ## Output format
 ```
 🗂️ Inbox Triage — <date>   (mode: propose | apply)
+Backlog: processed <N>/<batch_cap> newest · <M> unlabeled threads remain (~<R> more daily runs to clear)
 
 Counts per label:
   • <label> — <N>
