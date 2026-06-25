@@ -1,0 +1,27 @@
+# Runtime Python dependencies for the Personal Automations Kit.
+#
+# Today only PyYAML is strictly required (the inbox-pipeline config tooling).
+# The rest are here for the CapWeb extraction work — pulling timesheets and
+# invoices out of PDF and Excel attachments before they reach the deterministic
+# reconcile.py / propose_payments.py step. Keep this list to libraries that are
+# genuinely imported by committed code; data/secrets never live here.
+
+# --- config tooling (validate_config.py, build_filters.py, capweb) ---
+PyYAML>=6.0
+
+# --- CapWeb attachment extraction (timesheets / invoices) ---
+# Excel (.xlsx) — modern timesheets and invoices
+openpyxl>=3.1
+# Excel (.xls) — legacy workbooks some clients still send
+xlrd>=2.0
+# Tabular wrangling of extracted rows (also reads Excel via openpyxl/xlrd)
+pandas>=2.2
+# PDF text + table extraction (pure-pip, no system libs) for PDF timesheets/invoices
+pdfplumber>=0.11
+# Backend the system `cryptography` (pulled in by pdfminer.six) needs to import;
+# absent from the base remote image, so install it explicitly.
+cffi>=1.16
+# Robust parsing of billing periods / due dates into normalized keys
+python-dateutil>=2.9
+# Validate extracted records against inbox-pipeline/capweb/schemas/*.schema.json
+jsonschema>=4.0

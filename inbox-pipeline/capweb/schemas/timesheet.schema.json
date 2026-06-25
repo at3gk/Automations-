@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "timesheet",
+  "description": "A timesheet record extracted from CapWeb mail/attachments. Leave a field null rather than guess; low-confidence records are routed to human review, not reconciliation.",
+  "type": "object",
+  "required": ["id", "client", "period", "hours"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "description": "stable id for this timesheet (e.g. Gmail message id + index)" },
+    "client": { "type": "string", "description": "client/payee name; reconciliation matches on this + period" },
+    "period": { "type": "string", "description": "billing period key, e.g. '2026-05' or '2026-W21' — must match the invoice's period string exactly" },
+    "hours": { "type": ["number", "string"], "description": "hours worked; compared exactly against the invoice" },
+    "amount": { "type": ["number", "string", "null"], "description": "expected amount (hours x rate) if stated; null if not present" },
+    "source_message_id": { "type": ["string", "null"] },
+    "confidence": { "type": ["number", "null"], "description": "0-1 extraction confidence; below threshold => human review, not reconcile" }
+  }
+}

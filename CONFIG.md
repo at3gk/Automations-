@@ -64,6 +64,20 @@ drafts read like you — the words stay yours, the kit just gets the first draft
 - **Follow-up staleness N (follow-up-tracker):** << 3 >> days
 - **Daily-triage urgency window:** << today + tomorrow >>
 
+## Inbox pipeline (the `inbox-triage` + `brief-*` + `capweb-reconcile` skills)
+
+Unlike the rest of the kit, this subsystem's "personalization" is **structured config**, not prose,
+so it lives in its own files (the single source of truth). This section is just the index/pointers:
+
+- **Taxonomy + sender map:** `inbox-pipeline/config/taxonomy.yml`, `sender-map.yml`, `ambiguous.yml`.
+  Edit those to change labels, archive policy, or sender routing — then run
+  `python inbox-pipeline/generate/validate_config.py` and `…/build_filters.py`.
+- **Drive state folder:** << "/AutomationState/" >>  <!-- holds inbox-state.json + ledger-*.json; create once -->
+- **Triage staleness window (consumers fall back if older):** << 36 >> hours
+- **CapWeb extraction confidence floor (below → human review):** << 0.7 >>
+
+No secrets here — Gmail/Drive access comes from the connectors you reconnect per account.
+
 ## Connector choices (swap per account)
 
 The kit assumes **Google Workspace** (Gmail, Calendar, Drive) and **GitHub**. Where a skill

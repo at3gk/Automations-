@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "invoice",
+  "description": "An invoice record extracted from CapWeb mail/attachments. Leave a field null rather than guess; low-confidence records are routed to human review, not reconciliation.",
+  "type": "object",
+  "required": ["id", "client", "period", "hours", "amount"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "description": "stable invoice id (invoice number, or Gmail message id + index)" },
+    "client": { "type": "string", "description": "client/payee name; reconciliation matches on this + period" },
+    "period": { "type": "string", "description": "billing period key; must match the timesheet's period string exactly" },
+    "hours": { "type": ["number", "string"], "description": "billed hours; compared exactly against the timesheet" },
+    "amount": { "type": ["number", "string"], "description": "billed amount; compared EXACTLY (no tolerance) against the timesheet amount" },
+    "due_date": { "type": ["string", "null"], "description": "ISO date the invoice is due; required to appear on the proposed payment schedule" },
+    "payee": { "type": ["string", "null"], "description": "who to pay; defaults to client when absent" },
+    "source_message_id": { "type": ["string", "null"] },
+    "confidence": { "type": ["number", "null"], "description": "0-1 extraction confidence; below threshold => human review, not reconcile" }
+  }
+}

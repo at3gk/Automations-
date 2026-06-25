@@ -1,38 +1,45 @@
 # Personal Automations Kit
 
-A portable, version-controlled kit of scheduled agentic **automations**, packaged as a Claude
-Code plugin. Inspired by the idea of giving an agent a *standing brief* — "tell it what to care
-about, how to think, and when to run" — then letting it run every day without you remembering to ask.
+A portable, version-controlled kit of scheduled agentic **automations**, vendored directly into the
+repo as **project skills** (`.claude/skills/`). Inspired by the idea of giving an agent a *standing
+brief* — "tell it what to care about, how to think, and when to run" — then letting it run every day
+without you remembering to ask.
 
-## The portability model (read this first)
+## The deployment model (read this first)
 
-This kit is built so you can pick it up and drop it onto **any** Claude account (e.g. moving
-from a personal to a work account) in minutes:
+The kit is built to run as **Claude Code routines** — most importantly in **cloud sessions**
+([claude.ai/code](https://claude.ai/code) scheduled tasks), which clone this repo into a fresh VM
+and run server-side. The design follows from that:
 
-- **Logic lives in Skills → Git.** Every automation is a `SKILL.md` under `skills/`. The skill
-  holds *all* the logic. Schedules never contain logic.
+- **Logic lives in Skills, vendored into the repo.** Every automation is a `SKILL.md` under
+  **`.claude/skills/`**. Because that directory is *part of the clone*, a cloud session
+  auto-discovers every skill with **no install step, no marketplace, no network fetch** — you just
+  connect the repo. (See [Claude Code on the web → what's available in cloud sessions](https://code.claude.com/docs/en/claude-code-on-the-web).)
 - **Schedules are thin triggers.** Each scheduled task is one line — *"Run the `meeting-prep`
-  skill and post the digest."* Recreating your schedules on a new account is a 30-second,
-  copy-paste job (see the table below).
-- **Connectors are per-account wiring.** Gmail, Calendar, Drive, GitHub, etc. are reconnected
-  on each account. No credentials, tokens, or IDs ever live in this repo.
-- **Personalization lives in one file: [`CONFIG.md`](./CONFIG.md).** Skills reference your
-  details *by name* (e.g. "the running wins doc named in CONFIG.md"), never by embedding them.
+  skill and post the digest."* The skill holds all the logic; the schedule never does.
+- **Connectors are per-account wiring.** Gmail, Calendar, Drive, GitHub are connected per account on
+  claude.ai and inherited by its cloud sessions. No credentials, tokens, or IDs ever live in this repo.
+- **Personalization lives in one file: [`CONFIG.md`](./CONFIG.md).** Skills reference your details
+  *by name* (e.g. "the running wins doc named in CONFIG.md"), never by embedding them. (The
+  `inbox-pipeline` subsystem keeps its structured config in `inbox-pipeline/config/*.yml`; CONFIG.md
+  points at it.)
 
-Fill in `CONFIG.md`, reconnect your connectors, recreate the thin-trigger schedules — done.
+> **Why project skills, not a plugin/marketplace.** A `/plugin install` writes to user-scoped
+> `~/.claude/` config that does **not** exist in a fresh cloud clone, so plugin skills don't load in
+> cloud sessions. Skills committed to the repo's `.claude/skills/` do. This kit therefore vendors
+> everything into the repo and uses no marketplace.
 
-## Transfer checklist (personal → work account)
+## Setup checklist (new account or new repo)
 
 1. **Push this repo** to your own GitHub (or keep using the existing one).
-2. **Add the marketplace:** `/plugin marketplace add at3gk/Automations-`
-   _(On a different account, swap `at3gk` for that account's GitHub user once you've pushed your own copy.)_
-3. **Install the plugin:** `/plugin install personal-automations@claude-automations`
-4. **Reconnect connectors** on the new account: Gmail, Google Calendar, Google Drive, GitHub —
-   plus any swapped ones (Slack/Linear/Firecrawl) you noted in `CONFIG.md`.
-5. **Fill in [`CONFIG.md`](./CONFIG.md)** with the new account's name, role, repos, reports,
-   doc names, topics, voice, etc. (See "What to fill in" at the bottom.)
-6. **Recreate the thin-trigger schedules** you want, using the exact prompts in the table below.
-   Put must-arrive jobs on **Cloud**, local-file jobs on **Cowork** (explained below).
+2. **Connect the repo** in [claude.ai/code](https://claude.ai/code) (or open it locally with Claude
+   Code) — skills under `.claude/skills/` load automatically; there is nothing to install.
+3. **Connect connectors** on the account: Gmail, Google Calendar, Google Drive, GitHub — plus any
+   swapped ones (Slack/Linear/Firecrawl) you noted in `CONFIG.md`.
+4. **Fill in [`CONFIG.md`](./CONFIG.md)** with the account's name, role, repos, reports, doc names,
+   topics, voice, etc. (See "What to fill in" at the bottom.)
+5. **Create the thin-trigger schedules** you want, using the exact prompts in the table below. Put
+   must-arrive jobs on **Cloud**, local-file jobs on **Cowork** (explained below).
 
 ## Start with one (don't automate everything at once)
 
@@ -91,10 +98,37 @@ scheduled task: it just invokes the skill, which holds the logic.
 | `inbox-triage-drafts` | optional | Daily, ~8:00 | Cloud | Gmail | Run the inbox-triage-drafts skill; categorize unread and draft routine replies (do not send). |
 | `receipts-and-expenses` | optional | Weekly, Fri ~16:00 | Cloud | Gmail, Drive | Run the receipts-and-expenses skill and post receipts to file. |
 | `automation-auditor` | ✅ on | Monthly, 1st ~9:00 | Cloud | all available | Run the automation-auditor skill and suggest new automations (do not create them). |
+| `inbox-triage` | optional | Daily, ~7:30 | Cloud | Gmail, Drive | Run the inbox-triage skill in propose mode and post the [Triage] draft. _(Say "apply" to label/archive.)_ |
+| `brief-ai-learning` | optional | Daily, ~8:00 (after triage) | Cloud | Gmail, Drive | Run the brief-ai-learning skill and draft the AI Learning brief. |
+| `brief-finance` | optional | Weekly, Mon ~8:00 (after triage) | Cloud | Gmail, Drive | Run the brief-finance skill and draft the Finance brief. |
+| `brief-career` | optional | Weekly, Mon ~8:00 (after triage) | Cloud | Gmail, Drive | Run the brief-career skill and draft the Career brief. |
+| `brief-travel` | optional | Daily, ~7:00 (after triage) | Cloud | Gmail, Drive | Run the brief-travel skill and draft the Travel brief. |
+| `capweb-reconcile` | optional | Weekly, Fri ~16:00 (after triage) | Cloud | Gmail, Drive | Run the capweb-reconcile skill and draft the [Brief: Capweb] payment proposal. |
+
+## The `inbox-pipeline` subsystem (producer → consumers)
+
+Six of the skills above form a small **pipeline** rather than standing alone, with their shared
+machinery in [`inbox-pipeline/`](./inbox-pipeline/):
+
+- **Producer — `inbox-triage`** labels/archives the unlabeled tail of your inbox from
+  `inbox-pipeline/config/*.yml` (the single source of truth) and writes the Drive manifest
+  `inbox-state.json`. It also generates importable **Gmail filters** so the server does the bulk
+  (`python inbox-pipeline/generate/build_filters.py`).
+- **Consumers — `brief-*` and `capweb-reconcile`** read that manifest, query Gmail **by label**, and
+  deliver Gmail **drafts**. Run the producer first (the manifest must be fresh). `capweb-reconcile`
+  is deterministic and human-in-the-loop: it reconciles timesheets↔invoices with exact-dollar
+  matching and only ever **proposes** payments — it never pays.
+
+This subsystem follows the same kit rules (logic in skills, state in Drive, no secrets in git). The
+one extension to "drafts not actions": `inbox-triage` may **label and archive** mail, but only in
+explicit **apply** mode, only within `taxonomy.yml` policy, capped by an anomaly guard, and never
+deleting. See [`inbox-pipeline/docs/CONVENTIONS.md`](./inbox-pipeline/docs/CONVENTIONS.md) for the
+full run contract and [`inbox-pipeline/README.md`](./inbox-pipeline/README.md) for the layout.
 
 ## How each skill is built (so you can edit safely)
 
-Every `SKILL.md` follows the same shape:
+Every skill is a directory `.claude/skills/<name>/SKILL.md`, and every `SKILL.md` follows the same
+shape:
 
 - **Frontmatter** — `name` + a `description` written to trigger auto-discovery (what it does,
   when to use it, trigger phrases, required connectors).
@@ -126,5 +160,9 @@ competitor URLs, launch sources, your running "wins" doc name, brag-doc name, re
 follow-up threshold `N`, and your connector choices. **No secrets** — credentials stay in the
 connectors you reconnect per account.
 
-> The install commands and `.claude-plugin/plugin.json` are wired to `at3gk/Automations-`. On a
-> new account, push your own copy and swap `at3gk` for that account's GitHub username.
+> **Running these as cloud routines:** connect this repo in [claude.ai/code](https://claude.ai/code)
+> and create scheduled tasks whose body is the thin-trigger prompt from the table above (e.g. *"Run
+> the inbox-triage skill in propose mode and post the [Triage] draft."*). The skills load from
+> `.claude/skills/` automatically — there is no plugin to install. See
+> [`SCHEDULES.md`](./SCHEDULES.md) for ready-to-paste task blocks and `CLAUDE.md` for how the repo
+> is laid out.

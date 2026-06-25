@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "note": "Declarative map of the inbox-pipeline. An orchestrator MUST verify the producer ran (fresh inbox-state.json.last_triage, within max_staleness) before running any consumer. State lives in Drive /AutomationState/, never in git.",
+  "max_staleness_hours": 36,
+  "routines": [
+    {
+      "id": "inbox-triage",
+      "skill": ".claude/skills/inbox-triage",
+      "kind": "producer",
+      "reads": ["config/taxonomy.yml", "config/sender-map.yml", "config/ambiguous.yml", "inbox-state.json"],
+      "writes": ["inbox-state.json", "ledger-triage.json", "Gmail labels", "Gmail archive"],
+      "draft_prefix": "[Triage]"
+    },
+    {
+      "id": "brief-ai-learning",
+      "skill": ".claude/skills/brief-ai-learning",
+      "kind": "consumer",
+      "reads": ["inbox-state.json", "Gmail (by label)"],
+      "writes": ["ledger-ai-learning.json", "Gmail draft"],
+      "draft_prefix": "[Brief: AI Learning]"
+    },
+    {
+      "id": "brief-finance",
+      "skill": ".claude/skills/brief-finance",
+      "kind": "consumer",
+      "reads": ["inbox-state.json", "Gmail (by label)"],
+      "writes": ["ledger-finance.json", "Gmail draft"],
+      "draft_prefix": "[Brief: Finance]"
+    },
+    {
+      "id": "brief-career",
+      "skill": ".claude/skills/brief-career",
+      "kind": "consumer",
+      "reads": ["inbox-state.json", "Gmail (by label)"],
+      "writes": ["ledger-career.json", "Gmail draft"],
+      "draft_prefix": "[Brief: Career]"
+    },
+    {
+      "id": "brief-travel",
+      "skill": ".claude/skills/brief-travel",
+      "kind": "consumer",
+      "reads": ["inbox-state.json", "Gmail (by label)"],
+      "writes": ["ledger-travel.json", "Gmail draft"],
+      "draft_prefix": "[Brief: Travel]"
+    },
+    {
+      "id": "capweb-reconcile",
+      "skill": ".claude/skills/capweb-reconcile",
+      "kind": "consumer",
+      "reads": ["inbox-state.json", "Gmail (by label)", "capweb/schemas/*.json"],
+      "writes": ["ledger-capweb.json", "Gmail draft", "/AutomationState/scratch (transient)"],
+      "draft_prefix": "[Brief: Capweb]"
+    }
+  ],
+  "run_order": [
+    "inbox-triage",
+    "brief-ai-learning",
+    "brief-finance",
+    "brief-career",
+    "brief-travel",
+    "capweb-reconcile"
+  ]
+}
