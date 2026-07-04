@@ -16,11 +16,15 @@ categories:
            kenhuangus@substack.com, systemdesignone@substack.com, hexgarcia.com, scaleupmedia.com,
            diamantai@substack.com]
   "AI & Dev/Learning":
-    from: [datacamp.com, maven.com, parlance-labs.com, ideabrowser.com, scribehow.com]
+    from: [datacamp.com, maven.com, parlance-labs.com, ideabrowser.com, scribehow.com,
+           notification.circle.so]   # Circle community (quant-trading guides); subdomain-scoped so it
+                                      # doesn't over-match other Circle.so communities
   "AI & Dev/Dev Tools":
     from: [github.com, jules-noreply@google.com, supabase.com, firebase-noreply@google.com]
   "Finance/Banking & Cards":
-    from: [americanexpress.com, capitalone.com, paypal.com, venmo.com, members.bilt.com]
+    from: [americanexpress.com, capitalone.com, paypal.com, venmo.com, members.bilt.com,
+           mcmap.chase.com]   # Chase marketing subdomain (Pay Over Time, refi offers). Scoped to
+                              # mcmap so it doesn't catch chase.com security/login alerts.
   "Finance/Investing":
     from: [fidelity.com, coinbase.com, startengine.com]
     subject: ["Mariner Market Commentary"]
@@ -32,22 +36,25 @@ categories:
     from: [aswemove.com]
   "Pets":
     from: [chewy.com, petsmart.com, litter-robot.com, petlibro.com, covetruspharmacy.com,
-           kytin.com, primalinstinct.net]
+           kytin.com, primalinstinct.net, yourcatbackpack.com]
   "Health":
     from: [anthem.com, webpt.com, google-health-noreply@google.com]
   "Auto":
-    from: [reyrey.net, carlabs-x.com]
+    from: [reyrey.net, carlabs-x.com,
+           blinknetwork.com]   # Blink EV-charging receipts ("Funds Added to Your Blink Account").
+                               # Distinct from blink.com (home cameras) in Shopping & Deals.
   "Travel":
-    from: [united.com, avantstay.com, adventuresunbound.com]
+    from: [united.com, avantstay.com, adventuresunbound.com,
+           lufthansa.com, royalcaribbeanmarketing.com]
   "Career":
     from: [linkedin.com, climatebase.org]
   "Accounts & Security":
     from: [accounts.google.com, okta.com]
     subject: ["verification code", "one-time", "security alert"]
   "Civic & Charity":
-    from: [govdelivery.com, rectrac.com, usaforunhcr.org]
+    from: [govdelivery.com, rectrac.com, usaforunhcr.org, uso.org]
   "Reading":
-    from: [nytimes.com, cnn.com, veganscratchkitchen@substack.com]
+    from: [nytimes.com, cnn.com, veganscratchkitchen@substack.com, morningbrew.com]
   "Shopping & Deals":
     from: [beyondyoga.com, underarmour.com, fahertybrand.com, lululemon.com, wolfandshepherd.com,
            cotopaxi.com, rei.com, bellsofsteel.us, thenormalbrand.com, target.com, bestbuy.com,
@@ -55,7 +62,13 @@ categories:
            happyearsearplugs.com, eufylife.com, josbank.com, menswearhouse.com, adobe.com, squidhaus.com,
            blink.com, chrisheria.com, getsquire.com, bose.com, chipotle.com, sweetgreen.com,
            choptsalad.com, tacobell.com, hbomax.com, ticketmaster.com, sxsw.com, warriors.com,
-           nflshop.com, gametime.co, squaremktg.com, googlestore-noreply@google.com]
+           nflshop.com, gametime.co, squaremktg.com, googlestore-noreply@google.com,
+           fanatics.com, vuori.com, bananarepublicfactory.com, journeyofficial.com,
+           hershey-sweetmail.com, marketing.lyftmail.com, uber.com]
+    # NOTE: this category is archive:true — matched promo mail leaves the inbox. `uber.com` and
+    # `marketing.lyftmail.com` are the ride brands' MARKETING senders (observed mail was promos:
+    # "50% off 1 ride", "grocery game plan"). If Uber/Lyft *trip receipts* ever arrive from these
+    # same domains and you want them kept visible, move that brand to a non-archiving category.
   # Transactional order/payment mail from overloaded senders (e.g. Amazon) — routed by SUBJECT,
   # kept VISIBLE (archive:false in taxonomy). Sender (from) matches always win over these, so
   # domain-mapped retailers like chewy.com still go to their own category, not here.
