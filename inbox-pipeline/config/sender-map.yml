@@ -40,9 +40,7 @@ categories:
   "Health":
     from: [anthem.com, webpt.com, google-health-noreply@google.com]
   "Auto":
-    from: [reyrey.net, carlabs-x.com,
-           blinknetwork.com]   # Blink EV-charging receipts ("Funds Added to Your Blink Account").
-                               # Distinct from blink.com (home cameras) in Shopping & Deals.
+    from: [reyrey.net, carlabs-x.com]
   "Travel":
     from: [united.com, avantstay.com, adventuresunbound.com,
            lufthansa.com, royalcaribbeanmarketing.com]
@@ -55,6 +53,20 @@ categories:
     from: [govdelivery.com, rectrac.com, usaforunhcr.org, uso.org]
   "Reading":
     from: [nytimes.com, cnn.com, veganscratchkitchen@substack.com, morningbrew.com]
+  # Claude/Anthropic product news + this pipeline's own status emails. Exact addresses so the
+  # Anthropic RECEIPT sender (invoice+statements@mail.anthropic.com) still routes to Receipts.
+  "Claude":
+    from: [no-reply-claude@mail.anthropic.com, no-reply@email.claude.com]
+  # Receipts/invoices — routed to the pre-existing "Receipts" label (kept visible, not archived).
+  # `subject` catches generic receipts; `from` covers senders whose subject isn't obviously a receipt
+  # (e.g. Electrify "Session summary", Blink "Funds Added"). Occasional marketing from these charging
+  # senders may land here too — acceptable vs. missing a receipt.
+  "Receipts":
+    from: [alerts.parkmobile.io, email.electrifyamerica.com, blinknetwork.com, patient-message.com,
+           practicemailer.com, revenuecat.com, toasttab.com, clover.com,
+           invoice+statements@mail.anthropic.com, invoice+statements@replicate.com,
+           googleplay-noreply@google.com]
+    subject: ["receipt", "invoice"]
   "Shopping & Deals":
     from: [beyondyoga.com, underarmour.com, fahertybrand.com, lululemon.com, wolfandshepherd.com,
            cotopaxi.com, rei.com, bellsofsteel.us, thenormalbrand.com, target.com, bestbuy.com,
