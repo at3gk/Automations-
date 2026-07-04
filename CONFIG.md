@@ -86,7 +86,14 @@ every run after sees just the unlabeled tail + new mail.)
 
 - **Per-run batch cap:** << 200 >> newest threads  (raise to drain a backlog faster; lower for shorter sessions)
 - **Archive hard-halt cap:** << 50 >> threads  (archiving is the only semi-destructive action — the run halts and applies nothing if exceeded)
-- **Unknown-sender halt fraction:** << 60 >> % of the batch  (above this ⇒ likely broken sender map ⇒ halt; below ⇒ normal backlog, senders just suggested)
+- **Unknown-sender halt fraction:** << 60 >> % of the batch
+- **Unknown-sender halt floor:** << 40 >> unknown threads  (the fraction only trips the halt once at least this many threads are unknown, so a tiny high-variety batch — e.g. 7/8 — never trips it; a large batch above the fraction always does)
+
+  When a run's unknown (Review/Unsorted) threads exceed **both** the floor **and** the fraction, the
+  sender map is out of date: the run **halts, applies nothing, and downgrades to propose** (labels
+  the gap in a `[Triage]` draft). This halt is **non-negotiable** — "it's just an aged backlog" is
+  not a reason to proceed; that's exactly the condition the halt exists to catch. Fix the map
+  (add the suggested senders) and the next run clears on its own.
 
 ### Brief delivery (how the `brief-*` lenses reach you)
 

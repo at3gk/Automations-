@@ -46,12 +46,22 @@ These run unattended — never pause to ask a question.
 6. **Idempotency.** Skip any thread already in `ledger-triage.json`.
 7. **Apply policy.** Matched category → its label; **archive only if that category's `archive:
    true`** (currently only `Shopping & Deals`). Never archive anything else.
-8. **Anomaly guard.** **Hard-halt and apply nothing** if this run would archive > `archive_cap`
-   (CONFIG; default **50**) threads — archiving is the only semi-destructive action and always
-   warrants a human checkpoint. Unknown senders are **report-only** during a capped run (they're
-   staged to `Review/Unsorted`, never acted on destructively); halt only if unknown senders exceed
-   `unknown_halt_fraction` (CONFIG; default **60%**) of the batch, which signals a broken sender map
-   rather than a normal backlog. (The per-run `batch_cap` already bounds blast radius.)
+8. **Anomaly guard (two independent hard-halts — a trip on EITHER means apply nothing this run).**
+   - **Archive cap.** Halt if this run would archive > `archive_cap` (CONFIG; default **50**)
+     threads — archiving is the only semi-destructive action and always warrants a human checkpoint.
+   - **Unknown-sender guard.** Compute `unknown_count` (threads staged to `Review/Unsorted`) and
+     `unknown_fraction = unknown_count / classified`. **Halt if `unknown_count ≥ unknown_halt_floor`
+     (CONFIG; default **40**) AND `unknown_fraction > unknown_halt_fraction` (CONFIG; default
+     **60%**).** The floor is what distinguishes a genuinely broken/stale sender map (large batch,
+     most senders unmapped) from a harmless small high-variety batch (e.g. 7/8 unknown), so the guard
+     no longer false-trips on tiny runs — and no longer needs a judgment call to ignore.
+   - **A tripped guard is non-negotiable and NOT overridable.** When either condition trips, this run
+     **downgrades to `propose`**: apply no labels, no archives, no Drive writes — deliver only the
+     `[Triage]` draft with the counts + suggested additions. Do **not** rationalize past it: "it's an
+     aged/expected backlog", "a prior run proceeded", "archives are low, only Review/Unsorted is
+     high" are **not** reasons to apply. A high unknown fraction on a large batch is precisely the
+     signal to stop and let a human update the map. (The per-run `batch_cap` bounds blast radius, but
+     it does not substitute for this halt.)
 9. **Discover senders.** Collect senders with **≥3 hits this run** that aren't in `sender-map.yml`
    as paste-ready suggested additions (domain + proposed category + sample subjects).
 10. **Writes (apply only).** Apply the label/archive actions; append touched thread IDs (+ run
@@ -77,7 +87,7 @@ Review/Unsorted (need a human read): <N>
 Suggested sender-map.yml additions (≥3 hits, paste-ready):
   "<Category>":
     from: [<domain>]   # samples: "<subject>", "<subject>"
-⚠️ Guard trips: <e.g. archive cap exceeded — halted, nothing applied>
+⚠️ Guard trips: <e.g. unknown-sender guard: 123/150 (82%) ≥ floor 40 & > 60% — HALTED (propose), nothing applied>
 ```
 
 ## Guardrails
@@ -87,7 +97,9 @@ Suggested sender-map.yml additions (≥3 hits, paste-ready):
   `preserved_labels`.**
 - **Single source of truth:** all labels/senders come from `inbox-pipeline/config/*.yml`. New
   senders are *suggested*, never silently added.
-- **Anomaly guard halts** rather than mass-acting on a misconfiguration.
+- **Anomaly guard halts** rather than mass-acting on a misconfiguration. A trip **always** downgrades
+  the run to `propose` — it is a hard stop, never a judgment call. Do not proceed because the backlog
+  "looks expected" or a previous run proceeded; a run that talks itself past this guard is a bug.
 - Owns `ledger-triage.json` and `inbox-state.json` only; never writes another routine's state.
 - Related read-only kit skill: `daily-triage-digest` answers "what needs me today" without changing
   mail; this skill *organizes* mail and produces the manifest. They complement, not replace.

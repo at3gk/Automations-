@@ -88,9 +88,20 @@ labels, re-archive, or re-brief.
 
 ## Anomaly guard
 
-If a run would exceed a configured cap, **stop and report instead of acting**. `inbox-triage`
-defaults: archive > **50** threads, or > **25** unknown senders in one run → halt and surface the
-counts for a human, rather than mass-acting on a misconfiguration.
+If a run would exceed a configured cap, **stop and report instead of acting** — downgrade the run to
+`propose`, apply nothing, and surface the counts for a human. `inbox-triage` has two independent
+hard-halts (a trip on **either** halts the whole run):
+
+- **Archive cap** — would archive > `archive_cap` (default **50**) threads.
+- **Unknown-sender guard** — unknown (Review/Unsorted) threads ≥ `unknown_halt_floor` (default
+  **40**) **and** > `unknown_halt_fraction` (default **60%**) of the batch. The floor keeps a tiny
+  high-variety batch (e.g. 7/8 unknown) from tripping it, while a large batch over the fraction
+  always does — that combination is the broken/stale-sender-map signal.
+
+**A tripped guard is non-negotiable.** It is a hard stop, not a heuristic to weigh: do not proceed
+because the unknowns "look like an expected aged backlog" or because a prior run proceeded. Update
+the config (add the suggested senders) and the next run clears on its own. A routine that rationalizes
+past a tripped guard and applies anyway is violating this contract.
 
 ## Staleness guard (consumers)
 
