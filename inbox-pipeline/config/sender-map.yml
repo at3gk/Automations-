@@ -20,7 +20,7 @@ categories:
   "AI & Dev/Dev Tools":
     from: [github.com, jules-noreply@google.com, supabase.com, firebase-noreply@google.com]
   "Finance/Banking & Cards":
-    from: [americanexpress.com, capitalone.com, paypal.com, venmo.com, members.bilt.com]
+    from: [americanexpress.com, capitalone.com, paypal.com, venmo.com, members.bilt.com, chase.com]
   "Finance/Investing":
     from: [fidelity.com, coinbase.com, startengine.com]
     subject: ["Mariner Market Commentary"]
@@ -32,13 +32,13 @@ categories:
     from: [aswemove.com]
   "Pets":
     from: [chewy.com, petsmart.com, litter-robot.com, petlibro.com, covetruspharmacy.com,
-           kytin.com, primalinstinct.net]
+           kytin.com, primalinstinct.net, yourcatbackpack.com]
   "Health":
     from: [anthem.com, webpt.com, google-health-noreply@google.com]
   "Auto":
     from: [reyrey.net, carlabs-x.com]
   "Travel":
-    from: [united.com, avantstay.com, adventuresunbound.com]
+    from: [united.com, avantstay.com, adventuresunbound.com, royalcaribbeanmarketing.com]
   "Career":
     from: [linkedin.com, climatebase.org]
   "Accounts & Security":
@@ -47,7 +47,7 @@ categories:
   "Civic & Charity":
     from: [govdelivery.com, rectrac.com, usaforunhcr.org]
   "Reading":
-    from: [nytimes.com, cnn.com, veganscratchkitchen@substack.com]
+    from: [nytimes.com, cnn.com, veganscratchkitchen@substack.com, morningbrew.com, do512.com]
   "Shopping & Deals":
     from: [beyondyoga.com, underarmour.com, fahertybrand.com, lululemon.com, wolfandshepherd.com,
            cotopaxi.com, rei.com, bellsofsteel.us, thenormalbrand.com, target.com, bestbuy.com,
@@ -55,7 +55,9 @@ categories:
            happyearsearplugs.com, eufylife.com, josbank.com, menswearhouse.com, adobe.com, squidhaus.com,
            blink.com, chrisheria.com, getsquire.com, bose.com, chipotle.com, sweetgreen.com,
            choptsalad.com, tacobell.com, hbomax.com, ticketmaster.com, sxsw.com, warriors.com,
-           nflshop.com, gametime.co, squaremktg.com, googlestore-noreply@google.com]
+           nflshop.com, gametime.co, squaremktg.com, googlestore-noreply@google.com,
+           bananarepublicfactory.com, fanatics.com, venum.com, leospaw.com, hershey-sweetmail.com,
+           facer.io, yoursole.com, toast-restaurants.com]
   # Transactional order/payment mail from overloaded senders (e.g. Amazon) — routed by SUBJECT,
   # kept VISIBLE (archive:false in taxonomy). Sender (from) matches always win over these, so
   # domain-mapped retailers like chewy.com still go to their own category, not here.
