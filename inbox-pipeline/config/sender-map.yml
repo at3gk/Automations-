@@ -34,7 +34,8 @@ categories:
     from: [chewy.com, petsmart.com, litter-robot.com, petlibro.com, covetruspharmacy.com,
            kytin.com, primalinstinct.net, yourcatbackpack.com]
   "Health":
-    from: [anthem.com, webpt.com, google-health-noreply@google.com]
+    from: [anthem.com, webpt.com, google-health-noreply@google.com, bigleagueperformanceandrehab.com,
+           email.lark.com]
   "Auto":
     from: [reyrey.net, carlabs-x.com]
   "Travel":
@@ -57,7 +58,8 @@ categories:
            choptsalad.com, tacobell.com, hbomax.com, ticketmaster.com, sxsw.com, warriors.com,
            nflshop.com, gametime.co, squaremktg.com, googlestore-noreply@google.com,
            bananarepublicfactory.com, fanatics.com, venum.com, leospaw.com, hershey-sweetmail.com,
-           facer.io, yoursole.com, toast-restaurants.com]
+           facer.io, yoursole.com, toast-restaurants.com, m.underdogfantasy.com, engage.canva.com,
+           email.nfl.com]
   # Transactional order/payment mail from overloaded senders (e.g. Amazon) — routed by SUBJECT,
   # kept VISIBLE (archive:false in taxonomy). Sender (from) matches always win over these, so
   # domain-mapped retailers like chewy.com still go to their own category, not here.
